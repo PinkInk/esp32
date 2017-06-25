@@ -1,0 +1,9 @@
+ESP32
+
+C:\Python27\Scripts\esptool.py --chip esp32 --port com3 --baud 460800 erase_flash
+C:\Python27\Scripts\esptool.py --chip esp32 --port com3 --baud 460800 write_flash 0 C:\Users\Tim\Documents\GIT\esp32\esp32-20170621-v1.9.1-214-g43d7a9d2.bin
+
+
+
+ESP8266 Flash
+https://github.com/themadinventor/esptool
