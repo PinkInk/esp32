@@ -16,7 +16,7 @@ p5(True)
 def tick(state):
     global LAST, TIME, FLAG
     now = time.ticks_ms()
-    if now-LAST > 1000:
+    if now-LAST > 250:
         TIME = time.ticks_diff(now, LAST)
         LAST = now
         FLAG = True
