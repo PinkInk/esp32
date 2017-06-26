@@ -37,7 +37,7 @@ def raZ(point, center, theta):
         pt[2] + center[2]
     )
 
-# ============== CUBE ==============
+# ============== MODEL: CUBE ==============
 cube = (
     ( # bottom face
         (cx-l, cy-l, 0),
@@ -60,24 +60,7 @@ cube = (
     ((cx-l, cy+l, 0), (cx-l, cy+l, 2*l)),
 )
 
-dt = 0
-for _ in range(400):
-    d.fill(0)
-    for path in cube:
-        previous = ()
-        for point in path:
-            point = raX(point, center, dt)
-            point = raY(point, center, dt)
-            point = raZ(point, center, dt)
-            point = tuple(map(int, point))
-            if previous:
-                d.line(point[0], point[1], previous[0], previous[1], 1)
-            previous = point
-    d.show()
-    dt += math.pi/24
-
-
-# ============== SPHERE ==============
+# ============== MODEL: SPHERE ==============
 circle = []
 l = cy
 point = cx, cy-l, l
@@ -89,19 +72,7 @@ for a in range(0, 360, 45):
     for point in circle:
         sphere.append(raY(point, center, math.radians(a)))
 
-dt = 0
-for _ in range(400):
-    d.fill(0)
-    for point in sphere:
-        point = raX(point, center, dt)
-        point = raY(point, center, dt)
-        point = raZ(point, center, dt)
-        point = tuple(map(int, point))
-        d.pixel(point[0], point[1], 1)
-    d.show()
-    dt += math.pi/24
-
-# ============== TORUS ==============
+# ============== MODEL: TORUS ==============
 ring = []
 dcen = cx+40, cy, l
 dpt = cx+40, cy-15, l
@@ -114,18 +85,53 @@ for a in range(0, 360, 30):
     for pt in ring:
         torus[-1].append(raY(pt, center, math.radians(a)))
 
-dt = 0
-for _ in range(400):
-    d.fill(0)
-    for path in torus:
-        previous = ()
-        for point in path:
+
+
+laps = 100
+while True:
+# ============== DRAW: CUBE ==============
+    dt = 0
+    for _ in range(laps):
+        d.fill(0)
+        for path in cube:
+            previous = ()
+            for point in path:
+                point = raX(point, center, dt)
+                point = raY(point, center, dt)
+                point = raZ(point, center, dt)
+                point = tuple(map(int, point))
+                if previous:
+                    d.line(point[0], point[1], previous[0], previous[1], 1)
+                previous = point
+        d.show()
+        dt += math.pi/24
+
+    # ============== DRAW: SPHERE ==============
+    dt = 0
+    for _ in range(laps):
+        d.fill(0)
+        for point in sphere:
             point = raX(point, center, dt)
             point = raY(point, center, dt)
-            # point = raZ(point, center, dt)
+            point = raZ(point, center, dt)
             point = tuple(map(int, point))
-            if previous:
-                d.line(point[0], point[1], previous[0], previous[1], 1)
-            previous = point
-    d.show()
-    dt += math.pi/36
+            d.pixel(point[0], point[1], 1)
+        d.show()
+        dt += math.pi/24
+
+    # ============== DRAW: TORUS ==============
+    dt = 0
+    for _ in range(laps):
+        d.fill(0)
+        for path in torus:
+            previous = ()
+            for point in path:
+                point = raX(point, center, dt)
+                point = raY(point, center, dt)
+                # point = raZ(point, center, dt)
+                point = tuple(map(int, point))
+                if previous:
+                    d.line(point[0], point[1], previous[0], previous[1], 1)
+                previous = point
+        d.show()
+        dt += math.pi/36
