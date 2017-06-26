@@ -12,14 +12,10 @@ class Line(ssd1306.SSD1306):
         self.ylow = vmin
         self.yscale = self.height/(vmax-vmin)
 
-    def scroll(self):
-        super().scroll(-1, 0)
-        self.show()
-
     def __call__(self, value=None, show_value=False):
         if value is None:
             self.tick += 1
-            self.scroll()
+            self.scroll(-1, 0)
         else:
             y = int(self.height-((value-self.ylow)*self.yscale))
             if self.last is None:
@@ -46,4 +42,5 @@ class Line(ssd1306.SSD1306):
                     )
             self.last = value
             self.tick = 0
-            self.scroll()
+            self.scroll(-1, 0)
+            self.show()
