@@ -69,7 +69,7 @@ def weakPerspectiveZ(point, center, fov):
         pt[1] * scale + center[1],
         pt[2] + center[2]
     )
-    
+
 def fovClipZ(point, fov):
     return point[2] > fov
 
@@ -78,7 +78,7 @@ def _translate(point, transform=None, projection=None):
         point = transform(point)
     if projection:
         point = projection(point)
-    return tuple(map(int, point))    
+    return tuple(map(int, point))
 
 def renderPoly(display, poly, transform=None, projection=None, color=1):
     for path in poly:
@@ -87,13 +87,13 @@ def renderPoly(display, poly, transform=None, projection=None, color=1):
             point = _translate(point, transform, projection)
             if previous:
                 display.line(
-                    point[0], point[1], 
-                    previous[0], previous[1], 
+                    point[0], point[1],
+                    previous[0], previous[1],
                     color
                 )
             previous = point
 
 def renderCloud(display, cloud, transform=None, projection=None, color=1):
     for point in cloud:
-            point = _translate(point, transform, projection)
-            display.pixel(point[0], point[1], color)
+        point = _translate(point, transform, projection)
+        display.pixel(point[0], point[1], color)
