@@ -21,6 +21,30 @@ SET_PRECHARGE = const(0xd9)
 SET_VCOM_DESEL = const(0xdb)
 SET_CHARGE_PUMP = const(0x8d)
 
+def intersection(line1, line2):
+    xd = line1[0][0] - line1[1][0], line2[0][0] - line2[1][0]
+    yd = line1[0][1] - line1[1][1], line2[0][1] - line2[1][1]
+    det = lambda a, b: a[0] * b[1] - a[1] * b[0]
+    div = det(xd, yd)
+    if div == 0:
+        return False
+    d = (det(*line1), det(*line2))
+    x = det(d, xd) / div
+    y = det(d, yd) / div
+    return x, y
+
+def pt_on_line(l, pt):
+    (x1, y1), (x2, y2) = l
+    return min(x1, x2) <= pt[0] <= max(x1, x2) \
+        and min(y1, y2) <= pt[1] <= max(y1, y2)
+
+def scale_linear(smin, smax, tmin, tmax):
+    scale = (tmax - tmin) / (smax - smin)
+    def close(val):
+        return int(((val - smin) * scale) + tmin)
+    return close
+
+
 class SSD1306:
 
     def __init__(self, i2c, height=64, addr=0x3c, external_vcc=False):
@@ -98,32 +122,32 @@ class SSD1306:
         self.write_cmd(self.pages - 1)
         self.write_data(self.buffer)
 
-    def fill(self, col):
-        self.framebuf.fill(col)
+    def fill(self, color):
+        self.framebuf.fill(color)
 
-    def pixel(self, x, y, col):
-        self.framebuf.pixel(x, y, col)
+    def pixel(self, x, y, color):
+        self.framebuf.pixel(x, y, color)
 
-    def hline(self, x, y, w, c):
-        self.framebuf.hline(x, y, w, c)
+    def hline(self, x, y, w, color):
+        self.framebuf.hline(x, y, w, color)
 
-    def vline(self, x, y, h, c):
-        self.framebuf.vline(x, y, h, c)
+    def vline(self, x, y, h, color):
+        self.framebuf.vline(x, y, h, color)
 
-    def line(self, x1, y1, x2, y2, c):
-        self.framebuf.line(x1, y1, x2, y2, c)
+    def line(self, x1, y1, x2, y2, color):
+        self.framebuf.line(x1, y1, x2, y2, color)
 
-    def rect(self, x, y, w, h, c):
-        self.framebuf.rect(x, y, w, h, c)
+    def rect(self, x, y, w, h, color):
+        self.framebuf.rect(x, y, w, h, color)
 
-    def fill_rect(self, x, y, w, h, c):
-        self.framebuf.fill_rect(x, y, w, h, c)
+    def fill_rect(self, x, y, w, h, color):
+        self.framebuf.fill_rect(x, y, w, h, color)
 
     def scroll(self, dx, dy):
         self.framebuf.scroll(dx, dy)
 
-    def text(self, string, x, y, col=1):
-        self.framebuf.text(string, x, y, col)
+    def text(self, string, x, y, color):
+        self.framebuf.text(string, x, y, color)
 
     def blit(self, fbuf, x, y, key=False):
         self.framebuf.blit(fbuf, x, y, key)
@@ -134,10 +158,10 @@ class SSD1306:
         ddF_y = -2 * r
         x = 0
         y = r
-        self.framebuf.pixel(cx, cy+r, color)
-        self.framebuf.pixel(cx, cy-r, color)
-        self.framebuf.pixel(cx+r, cy, color)
-        self.framebuf.pixel(cx-r, cy, color)
+        self.pixel(cx, cy+r, color)
+        self.pixel(cx, cy-r, color)
+        self.pixel(cx+r, cy, color)
+        self.pixel(cx-r, cy, color)
         while x < y:
             if f >= 0:
                 y -= 1
@@ -146,17 +170,17 @@ class SSD1306:
             x += 1
             ddF_x += 2
             f += ddF_x
-            self.framebuf.pixel(cx+x, cy+y, color)
-            self.framebuf.pixel(cx-x, cy+y, color)
-            self.framebuf.pixel(cx+x, cy-y, color)
-            self.framebuf.pixel(cx-x, cy-y, color)
-            self.framebuf.pixel(cx+y, cy+x, color)
-            self.framebuf.pixel(cx-y, cy+x, color)
-            self.framebuf.pixel(cx+y, cy-x, color)
-            self.framebuf.pixel(cx-y, cy-x, color)
+            self.pixel(cx+x, cy+y, color)
+            self.pixel(cx-x, cy+y, color)
+            self.pixel(cx+x, cy-y, color)
+            self.pixel(cx-x, cy-y, color)
+            self.pixel(cx+y, cy+x, color)
+            self.pixel(cx-y, cy+x, color)
+            self.pixel(cx+y, cy-x, color)
+            self.pixel(cx-y, cy-x, color)
 
     def fill_circle(self, cx, cy, r, color):
-        self.framebuf.line(cx, cy-r, cx, cy-r+2*r+1, color)
+        self.line(cx, cy-r, cx, cy-r+2*r+1, color)
         f = 1 - r
         ddF_x = 1
         ddF_y = -2 * r
@@ -170,15 +194,15 @@ class SSD1306:
             x += 1
             ddF_x += 2
             f += ddF_x
-            self.framebuf.line(cx+x, cy-y, cx+x, cy-y+2*y+1, color)
-            self.framebuf.line(cx+y, cy-x, cx+y, cy-x+2*x+1, color)
-            self.framebuf.line(cx-x, cy-y, cx-x, cy-y+2*y+1, color)
-            self.framebuf.line(cx-y, cy-x, cx-y, cy-x+2*x+1, color)
+            self.line(cx+x, cy-y, cx+x, cy-y+2*y+1, color)
+            self.line(cx+y, cy-x, cx+y, cy-x+2*x+1, color)
+            self.line(cx-x, cy-y, cx-x, cy-y+2*y+1, color)
+            self.line(cx-y, cy-x, cx-y, cy-x+2*x+1, color)
 
     def triangle(self, x0, y0, x1, y1, x2, y2, color):
-        self.framebuf.line(x0, y0, x1, y1, color)
-        self.framebuf.line(x1, y1, x2, y2, color)
-        self.framebuf.line(x2, y2, x0, y0, color)
+        self.line(x0, y0, x1, y1, color)
+        self.line(x1, y1, x2, y2, color)
+        self.line(x2, y2, x0, y0, color)
 
     def fill_triangle(self, x0, y0, x1, y1, x2, y2, color):
         if y0 > y1:
@@ -203,7 +227,7 @@ class SSD1306:
             else:
                 if x2 > b:
                     b = x2
-            self.framebuf.hline(a, y0, b+1-a, color)
+            self.hline(a, y0, b+1-a, color)
             return
         dx01 = x1 - x0
         dy01 = y1 - y0
@@ -225,7 +249,7 @@ class SSD1306:
             sb += dx02
             if a > b:
                 a, b = b, a
-            self.framebuf.hline(int(a), y, int(b+1-a), color)
+            self.hline(int(a), y, int(b+1-a), color)
         sa = dx12 * (y - y1)
         sb = dx02 * (y - y0)
         for y in range(last+1, y2+1):
@@ -235,4 +259,40 @@ class SSD1306:
             sb += dx02
             if a > b:
                 a, b = b, a
-            self.framebuf.hline(int(a), y, int(b+1-a), color)
+            self.hline(int(a), y, int(b+1-a), color)
+
+    def polyline(self, polyline, color=1):
+        previous = None
+        for point in polyline:
+            if previous:
+                self.line(*previous+point+(color,))
+            previous = point
+
+
+    def fill_polyline(self, polyline, color=1):
+        xs = tuple(map(lambda pt: pt[0], polyline))
+        ys = tuple(map(lambda pt: pt[1], polyline))
+        bounds = ((min(xs), min(ys)), (max(xs), max(ys)))
+        for y in range(bounds[1][1]-bounds[0][1]):
+            ints = []
+            previous = None
+            ray = (
+                (bounds[0][0], y+bounds[0][1]),
+                (bounds[1][0], y+bounds[0][1])
+            )
+            for point in polyline:
+                if previous:
+                    intersect = intersection(ray, (previous, point))
+                    if intersect \
+                            and pt_on_line(ray, intersect) \
+                            and pt_on_line((previous, point), intersect):
+                        ints.append(tuple(map(int, intersect)))
+                previous = point
+            ints = sorted(ints, key=lambda a: a[0])
+            for i, pt in enumerate(ints):
+                if i%2:
+                    self.hline(
+                        ints[i-1][0], ints[i-1][1],
+                        pt[0]-ints[i-1][0],
+                        1
+                    )
