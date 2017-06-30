@@ -38,10 +38,13 @@ def pt_on_line(l, pt):
     return min(x1, x2) <= pt[0] <= max(x1, x2) \
         and min(y1, y2) <= pt[1] <= max(y1, y2)
 
-def scale_linear(smin, smax, tmin, tmax):
+def scale_linear(smin, smax, tmin, tmax, flatten=True):
     scale = (tmax - tmin) / (smax - smin)
     def close(val):
-        return int(((val - smin) * scale) + tmin)
+        if flatten:
+            return int(((val - smin) * scale) + tmin)
+        else:
+            return ((val - smin) * scale) + tmin
     return close
 
 
@@ -261,7 +264,7 @@ class SSD1306:
                 a, b = b, a
             self.hline(int(a), y, int(b+1-a), color)
 
-    def polyline(self, polyline, color=1):
+    def polyline(self, polyline, color):
         previous = None
         for point in polyline:
             if previous:
@@ -269,7 +272,7 @@ class SSD1306:
             previous = point
 
 
-    def fill_polyline(self, polyline, color=1):
+    def fill_polyline(self, polyline, color):
         xs = tuple(map(lambda pt: pt[0], polyline))
         ys = tuple(map(lambda pt: pt[1], polyline))
         bounds = ((min(xs), min(ys)), (max(xs), max(ys)))
