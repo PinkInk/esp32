@@ -1,8 +1,9 @@
-# The MIT License (MIT)
-
-# Derived from micropython ssd1306.py ()
+# Derived from micropython ssd1306.py
+# (https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py)
 
 # Copyright (c) 2013, 2014 Damien P. George
+
+# The MIT License (MIT)
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
