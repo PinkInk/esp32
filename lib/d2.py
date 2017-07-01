@@ -17,12 +17,11 @@ def pt_on_line(l, pt):
 
 def scale_linear(smin, smax, tmin, tmax, flatten=True):
     scale = (tmax - tmin) / (smax - smin)
-    def close(val):
-        if flatten:
-            return int(((val - smin) * scale) + tmin)
-        else:
-            return ((val - smin) * scale) + tmin
-    return close
+    if flatten:
+        factory = lambda val: int(((val - smin) * scale) + tmin)
+    else:
+        factory = lambda val: ((val - smin) * scale) + tmin
+    return factory
 
 def rotate(x, y, cx, cy, t, flatten=True):
     from math import sin, cos
@@ -33,6 +32,35 @@ def rotate(x, y, cx, cy, t, flatten=True):
     x1 = cos_t * dx - sin_t * dy + cx
     y1 = sin_t * dx + cos_t * dy + cy
     if flatten:
-        return tuple(map(int, (x1, y1)))
+        return int(x1), int(y1)
     else:
         return x1, y1
+
+def scale(x, y, cx, cy, scale, flatten=True):
+    if flatten:
+        return int((x - cx) * scale + cx), int((y - cy)*scale + cy)
+    else:
+        return (x - cx) * scale + cx, (y - cy)*scale + cy
+
+def move(x, y, vx, vy, flatten=True, scale=1):
+    # scale of 1 or -1 is useful for moving a point
+    # to the origin (-1) and back (1) for transforms
+    if flatten:
+        return int(x + vx * scale), int(y + vy * scale)
+    else:
+        return x + vx * scale, y + vy * scale
+
+def mirror_x(x, y, x1, flatten=True):
+    if flatten:
+        return int(2 * x1 - x), int(y)
+    else:
+        return 2 * x1 - x, y
+
+def mirror_y(x, y, y1, flatten=True):
+    if flatten:
+        return int(x), int(2 * y1 - y)
+    else:
+        return x, 2 * y1 - y
+
+def mirror(x, y, l):
+    pass
