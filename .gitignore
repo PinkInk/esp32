@@ -1,3 +1,13 @@
 __pycache__
 .vscode
 *.mpy
+lib/umqtt
+lib/umqtt/simple.py
+lib/collections
+lib/collections/deque.py
+lib/uasyncio
+lib/uasyncio/__init__.py
+lib/uasyncio/core.py
+lib/uasyncio/queues.py
+lib/functools.py
+lib/urequests.py
