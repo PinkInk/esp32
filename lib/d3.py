@@ -1,34 +1,37 @@
 import math
 
 def rotateX(point, center, theta):
-    pt = tuple(map(lambda j: j[0]-j[1], zip(point, center)))
+    point = move(point, center, -1)
     sin_t = math.sin(theta)
     cos_t = math.cos(theta)
-    return (
-        pt[0] + center[0],
-        pt[1] * cos_t - pt[2] * sin_t + center[1],
-        pt[2] * cos_t + pt[1] * sin_t + center[2]
+    point = (
+        point[0],
+        point[1] * cos_t - point[2] * sin_t,
+        point[2] * cos_t + point[1] * sin_t
     )
+    return move(point, center)
 
 def rotateY(point, center, theta):
-    pt = tuple(map(lambda j: j[0]-j[1], zip(point, center)))
+    point = move(point, center, -1)
     sin_t = math.sin(theta)
     cos_t = math.cos(theta)
-    return (
-        pt[0] * cos_t - pt[2] * sin_t + center[0],
-        pt[1] + center[1],
-        pt[2] * cos_t + pt[0] * sin_t + center[2]
+    point = (
+        point[0] * cos_t - point[2] * sin_t,
+        point[1],
+        point[2] * cos_t + point[0] * sin_t
     )
+    return move(point, center)
 
 def rotateZ(point, center, theta):
-    pt = tuple(map(lambda j: j[0]-j[1], zip(point, center)))
+    point = move(point, center, -1)
     sin_t = math.sin(theta)
     cos_t = math.cos(theta)
-    return (
-        pt[0] * cos_t - pt[1] * sin_t + center[0],
-        pt[1] * cos_t + pt[0] * sin_t + center[1],
-        pt[2] + center[2]
+    point = (
+        point[0] * cos_t - point[1] * sin_t,
+        point[1] * cos_t + point[0] * sin_t,
+        point[2]
     )
+    return move(point, center)
 
 def rotateXYZ(point, center, angles):
     if angles[0]:
@@ -42,8 +45,8 @@ def rotateXYZ(point, center, angles):
 def scale(point, center, scalev):
     return tuple(map(lambda j: (j[0]-j[1])*j[2]+j[1], zip(point, center, scalev)))
 
-def move(point, vector):
-    return tuple(map(lambda j: j[0]+j[1], zip(point, vector)))
+def move(point, vector, scale=1):
+    return tuple(map(lambda j: j[0]+j[1]*scale, zip(point, vector)))
 
 # from functools import reduce
 # def sumprod(vector1, vector2):
@@ -62,13 +65,14 @@ def move(point, vector):
 #     pass
 
 def weakPerspectiveZ(point, center, fov):
-    pt = tuple(map(lambda j: j[0]-j[1], zip(point, center)))
-    scale = fov/(fov+pt[2])
-    return (
-        pt[0] * scale + center[0],
-        pt[1] * scale + center[1],
-        pt[2] + center[2]
+    point = move(point, center, -1)
+    scale = fov / (fov + point[2])
+    point = (
+        point[0] * scale,
+        point[1] * scale,
+        point[2]
     )
+    return move(point, center)
 
 def fovClipZ(point, fov):
     return point[2] > fov
