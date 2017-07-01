@@ -178,6 +178,10 @@ class SSD1306:
     def blit(self, fbuf, x, y, key=False):
         self.framebuf.blit(fbuf, x, y, key)
 
+    def invert(self):
+        for i, j in enumerate(self.buffer):
+            self.buffer[i] = ~j
+
     def circle(self, cx, cy, r, color):
         f = 1-r
         ddF_x = 1
@@ -287,15 +291,16 @@ class SSD1306:
                 a, b = b, a
             self.hline(int(a), y, int(b+1-a), color)
 
-    def polyline(self, polyline, color):
+    def polyline(self, polyline, color, close=False):
         previous = None
         for point in polyline:
             if previous:
                 self.line(*previous+point+(color,))
             previous = point
+        if close:
+            self.line(*previous+polyline[0]+(color,))
 
-
-    def fill_polyline(self, polyline, color):
+    def fill_polyline(self, polyline, color, close=False):
         from d2 import intersection, pt_on_line
         xs = tuple(map(lambda pt: pt[0], polyline))
         ys = tuple(map(lambda pt: pt[1], polyline))
@@ -315,6 +320,12 @@ class SSD1306:
                             and pt_on_line((previous, point), intersect):
                         ints.append(tuple(map(int, intersect)))
                 previous = point
+            if close:
+                intersect = intersection(ray, (previous, polyline[0]))
+                if intersect \
+                        and pt_on_line(ray, intersect) \
+                        and pt_on_line((previous, point), intersect):
+                    ints.append(tuple(map(int, intersect)))
             ints = sorted(ints, key=lambda a: a[0])
             for i, pt in enumerate(ints):
                 if i%2:
