@@ -46,16 +46,9 @@ d.show()
 # --------------------------------------------------------
 import machine, math
 from ssd1306 import SSD1306
+from d2 import rotate
 
 d = SSD1306(machine.I2C(scl=machine.Pin(4), sda=machine.Pin(5)))
-
-def rotate(x, y, cx, cy, t, flatten=False):
-    if flatten:
-        return int(math.cos(t) * (x - cx) - math.sin(t) * (y - cy) + cx),\
-                int(math.sin(t) * (x - cx) + math.cos(t) * (y - cy) + cy)
-    else:
-        return math.cos(t) * (x - cx) - math.sin(t) * (y - cy) + cx,\
-                math.sin(t) * (x - cx) + math.cos(t) * (y - cy) + cy
 
 cx, cy = d.width//2-1, d.height//2-1
 yd = 0
@@ -64,7 +57,7 @@ di = 1
 while True:
     points = []
     for a in range(0, 360, 60):
-        points.append(rotate(cx, cy-i, cx, cy, math.radians(a+yd), True))
+        points.append(rotate(cx, cy-i, cx, cy, math.radians(a+yd)))
     d.fill(0)
     for p1 in points:
         for p2 in points:
