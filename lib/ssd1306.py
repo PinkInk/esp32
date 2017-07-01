@@ -21,32 +21,6 @@ SET_PRECHARGE = const(0xd9)
 SET_VCOM_DESEL = const(0xdb)
 SET_CHARGE_PUMP = const(0x8d)
 
-def intersection(line1, line2):
-    xd = line1[0][0] - line1[1][0], line2[0][0] - line2[1][0]
-    yd = line1[0][1] - line1[1][1], line2[0][1] - line2[1][1]
-    det = lambda a, b: a[0] * b[1] - a[1] * b[0]
-    div = det(xd, yd)
-    if div == 0:
-        return False
-    d = (det(*line1), det(*line2))
-    x = det(d, xd) / div
-    y = det(d, yd) / div
-    return x, y
-
-def pt_on_line(l, pt):
-    (x1, y1), (x2, y2) = l
-    return min(x1, x2) <= pt[0] <= max(x1, x2) \
-        and min(y1, y2) <= pt[1] <= max(y1, y2)
-
-def scale_linear(smin, smax, tmin, tmax, flatten=True):
-    scale = (tmax - tmin) / (smax - smin)
-    def close(val):
-        if flatten:
-            return int(((val - smin) * scale) + tmin)
-        else:
-            return ((val - smin) * scale) + tmin
-    return close
-
 
 class SSD1306:
 
@@ -273,6 +247,7 @@ class SSD1306:
 
 
     def fill_polyline(self, polyline, color):
+        from d2 import intersection, pt_on_line
         xs = tuple(map(lambda pt: pt[0], polyline))
         ys = tuple(map(lambda pt: pt[1], polyline))
         bounds = ((min(xs), min(ys)), (max(xs), max(ys)))
