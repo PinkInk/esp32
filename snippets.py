@@ -62,9 +62,27 @@ while True:
     for p1 in points:
         for p2 in points:
             d.line(p1[0], p1[1], p2[0], p2[1], 1)
+    if i%2:
+        d.invert()
     d.show()
     yd += 5
     i += di
     if i == 64 or i == 0:
         di = -di
 # --------------------------------------------------------
+
+x1 = d.width//2-10
+y1 = d.height//2-5
+x2 = d.width//2+10
+y2 = d.width//2+5
+
+for y in range(y1, y2):
+    ds, ms = divmod(y*d.width + x1, 8)
+    de, me = divmod(y*d.width + x2, 8)
+    for i in range(ds, de):
+        d.buffer[i] = ~d.buffer[i]
+
+
+
+
+
