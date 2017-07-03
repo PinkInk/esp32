@@ -139,6 +139,11 @@ class SSD1306:
     def invert(self, invert):
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
+    def invert_pixel(self, x, y):
+        index = (y>>3) * self.width + x
+        offset = y & 0x07
+        self.buffer[index] = d.buffer[index] ^ (0x01<<offset) 
+
     def show(self):
         self.write_cmd(SET_COL_ADDR)
         self.write_cmd(0)
@@ -334,3 +339,4 @@ class SSD1306:
                         pt[0]-ints[i-1][0],
                         1
                     )
+
