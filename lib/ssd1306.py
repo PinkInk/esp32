@@ -139,10 +139,20 @@ class SSD1306:
     def invert(self, invert):
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
+    # def invert(self):
+    #     for i, j in enumerate(self.buffer):
+    #         self.buffer[i] = ~j
+
     def invert_pixel(self, x, y):
         index = (y>>3) * self.width + x
         offset = y & 0x07
-        self.buffer[index] = d.buffer[index] ^ (0x01<<offset) 
+        self.buffer[index] = self.buffer[index] ^ (0x01<<offset)
+
+    def invert_rect(self, x, y, w, h):
+        x, y, x1, y1 = min(x, x+w), min(y, y+h), max(x, x+w), max(y, y+h)
+        for _y in range(y, y1):
+            for _x in range(x, x1):
+                self.invert_pixel(_x, _y)
 
     def show(self):
         self.write_cmd(SET_COL_ADDR)
@@ -182,10 +192,6 @@ class SSD1306:
 
     def blit(self, fbuf, x, y, key=False):
         self.framebuf.blit(fbuf, x, y, key)
-
-    def invert(self):
-        for i, j in enumerate(self.buffer):
-            self.buffer[i] = ~j
 
     def circle(self, cx, cy, r, color):
         f = 1-r
