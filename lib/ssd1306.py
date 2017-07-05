@@ -136,12 +136,12 @@ class SSD1306:
         self.write_cmd(SET_CONTRAST)
         self.write_cmd(contrast)
 
-    def invert(self, invert):
+    def invert_display(self, invert):
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
-    # def invert(self):
-    #     for i, j in enumerate(self.buffer):
-    #         self.buffer[i] = ~j
+    def invert(self):
+        for i, j in enumerate(self.buffer):
+            self.buffer[i] = ~j
 
     def invert_pixel(self, x, y):
         index = (y>>3) * self.width + x
@@ -150,9 +150,16 @@ class SSD1306:
 
     def invert_rect(self, x, y, w, h):
         x, y, x1, y1 = min(x, x+w), min(y, y+h), max(x, x+w), max(y, y+h)
-        for _y in range(y, y1):
-            for _x in range(x, x1):
-                self.invert_pixel(_x, _y)
+        indexes = [(i>>3)*self.width for i in range(y, y1, 8)]
+        masks = [0]
+        for i in range(y, y1+1):
+            i = i&0x07
+            if i == 0:
+                masks.append(0)
+            masks[-1] = masks[-1] | (0b1<<i)
+        for _x in range(x, x1):
+            for idx, mask in zip(indexes, masks):
+                self.buffer[idx+_x] = self.buffer[idx+_x] ^ mask
 
     def show(self):
         self.write_cmd(SET_COL_ADDR)
@@ -351,4 +358,5 @@ class SSD1306:
                         pt[0]-ints[i-1][0],
                         1
                     )
+
 
