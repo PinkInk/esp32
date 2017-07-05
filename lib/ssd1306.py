@@ -194,15 +194,16 @@ class SSD1306:
         self.framebuf.blit(fbuf, x, y, key)
 
     def circle(self, cx, cy, r, color):
+        pixel = self.pixel
         f = 1-r
         ddF_x = 1
         ddF_y = -2 * r
         x = 0
         y = r
-        self.pixel(cx, cy+r, color)
-        self.pixel(cx, cy-r, color)
-        self.pixel(cx+r, cy, color)
-        self.pixel(cx-r, cy, color)
+        pixel(cx, cy+r, color)
+        pixel(cx, cy-r, color)
+        pixel(cx+r, cy, color)
+        pixel(cx-r, cy, color)
         while x < y:
             if f >= 0:
                 y -= 1
@@ -211,17 +212,18 @@ class SSD1306:
             x += 1
             ddF_x += 2
             f += ddF_x
-            self.pixel(cx+x, cy+y, color)
-            self.pixel(cx-x, cy+y, color)
-            self.pixel(cx+x, cy-y, color)
-            self.pixel(cx-x, cy-y, color)
-            self.pixel(cx+y, cy+x, color)
-            self.pixel(cx-y, cy+x, color)
-            self.pixel(cx+y, cy-x, color)
-            self.pixel(cx-y, cy-x, color)
+            pixel(cx+x, cy+y, color)
+            pixel(cx-x, cy+y, color)
+            pixel(cx+x, cy-y, color)
+            pixel(cx-x, cy-y, color)
+            pixel(cx+y, cy+x, color)
+            pixel(cx-y, cy+x, color)
+            pixel(cx+y, cy-x, color)
+            pixel(cx-y, cy-x, color)
 
     def fill_circle(self, cx, cy, r, color):
-        self.line(cx, cy-r, cx, cy-r+2*r+1, color)
+        line = self.line
+        line(cx, cy-r, cx, cy-r+2*r+1, color)
         f = 1 - r
         ddF_x = 1
         ddF_y = -2 * r
@@ -235,17 +237,19 @@ class SSD1306:
             x += 1
             ddF_x += 2
             f += ddF_x
-            self.line(cx+x, cy-y, cx+x, cy-y+2*y+1, color)
-            self.line(cx+y, cy-x, cx+y, cy-x+2*x+1, color)
-            self.line(cx-x, cy-y, cx-x, cy-y+2*y+1, color)
-            self.line(cx-y, cy-x, cx-y, cy-x+2*x+1, color)
+            line(cx+x, cy-y, cx+x, cy-y+2*y+1, color)
+            line(cx+y, cy-x, cx+y, cy-x+2*x+1, color)
+            line(cx-x, cy-y, cx-x, cy-y+2*y+1, color)
+            line(cx-y, cy-x, cx-y, cy-x+2*x+1, color)
 
     def triangle(self, x0, y0, x1, y1, x2, y2, color):
-        self.line(x0, y0, x1, y1, color)
-        self.line(x1, y1, x2, y2, color)
-        self.line(x2, y2, x0, y0, color)
+        line = self.line
+        line(x0, y0, x1, y1, color)
+        line(x1, y1, x2, y2, color)
+        line(x2, y2, x0, y0, color)
 
     def fill_triangle(self, x0, y0, x1, y1, x2, y2, color):
+        hline = self.hline
         if y0 > y1:
             y0, y1 = y1, y0
             x0, x1 = x1, x0
@@ -268,7 +272,7 @@ class SSD1306:
             else:
                 if x2 > b:
                     b = x2
-            self.hline(a, y0, b+1-a, color)
+            hline(a, y0, b+1-a, color)
             return
         dx01 = x1 - x0
         dy01 = y1 - y0
@@ -290,7 +294,7 @@ class SSD1306:
             sb += dx02
             if a > b:
                 a, b = b, a
-            self.hline(int(a), y, int(b+1-a), color)
+            hline(int(a), y, int(b+1-a), color)
         sa = dx12 * (y - y1)
         sb = dx02 * (y - y0)
         for y in range(last+1, y2+1):
@@ -300,19 +304,21 @@ class SSD1306:
             sb += dx02
             if a > b:
                 a, b = b, a
-            self.hline(int(a), y, int(b+1-a), color)
+            hline(int(a), y, int(b+1-a), color)
 
     def polyline(self, polyline, color, close=False):
+        line = self.line
         previous = None
         for point in polyline:
             if previous:
-                self.line(*previous+point+(color,))
+                line(*previous+point+(color,))
             previous = point
         if close:
-            self.line(*previous+polyline[0]+(color,))
+            line(*previous+polyline[0]+(color,))
 
     def fill_polyline(self, polyline, color, close=False):
         from d2 import intersection, pt_on_line
+        hline = self.hline
         xs = tuple(map(lambda pt: pt[0], polyline))
         ys = tuple(map(lambda pt: pt[1], polyline))
         bounds = ((min(xs), min(ys)), (max(xs), max(ys)))
@@ -340,7 +346,7 @@ class SSD1306:
             ints = sorted(ints, key=lambda a: a[0])
             for i, pt in enumerate(ints):
                 if i%2:
-                    self.hline(
+                    hline(
                         ints[i-1][0], ints[i-1][1],
                         pt[0]-ints[i-1][0],
                         1
