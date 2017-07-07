@@ -5,7 +5,7 @@ def intersection(line1, line2):
     div = det(xd, yd)
     if div == 0:
         return False
-    d = (det(*line1), det(*line2))
+    d = det(*line1), det(*line2)
     x = det(d, xd) / div
     y = det(d, yd) / div
     return x, y
