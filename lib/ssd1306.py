@@ -116,13 +116,13 @@ class SSD1306:
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
     def invert(self):
-        fb_utils.invert(self)
+        fb_utils.invert(self.buffer)
 
     def invert_pixel(self, x, y):
-        fb_utils.invert_pixel(self, x, y)
+        fb_utils.invert_pixel(self.buffer, x, y)
 
     def invert_rect(self, x, y, w, h):
-        fb_utils.invert_rect(self, x, y, w, h)
+        fb_utils.invert_rect(self.buffer, x, y, w, h)
 
     def show(self):
         self.write_cmd(SET_COL_ADDR)
