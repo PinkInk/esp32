@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 
 import framebuf
-import d2_primitives
+import d2primitives
 import fb_utils
 
 # register definitions
@@ -164,20 +164,20 @@ class SSD1306:
         self.framebuf.blit(fbuf, x, y, key)
 
     def circle(self, cx, cy, r, color):
-        d2_primitives.circle(self, cx, cy, r, color)
+        d2primitives.circle(self, cx, cy, r, color)
 
     def fill_circle(self, cx, cy, r, color):
-        d2_primitives.fill_circle(self, cx, cy, r, color)
+        d2primitives.fill_circle(self, cx, cy, r, color)
 
     def triangle(self, x0, y0, x1, y1, x2, y2, color):
-        d2_primitives.triangle(self, x0, y0, x1, y1, x2, y2, color)
+        d2primitives.triangle(self, x0, y0, x1, y1, x2, y2, color)
 
     def fill_triangle(self, x0, y0, x1, y1, x2, y2, color):
-        d2_primitives.fill_triangle(self, x0, y0, x1, y1, x2, y2, color)
+        d2primitives.fill_triangle(self, x0, y0, x1, y1, x2, y2, color)
 
     def polyline(self, polyline, color, close=False):
-        d2_primitives.polyline(self, polyline, color, close=False)
+        d2primitives.polyline(self, polyline, color, close=False)
 
     def fill_polyline(self, polyline, color, close=False):
-        d2_primitives.fill_polyline(self, polyline, color, close=False)
+        d2primitives.fill_polyline(self, polyline, color, close=False)
 
