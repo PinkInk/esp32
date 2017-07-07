@@ -24,7 +24,8 @@
 # THE SOFTWARE.
 
 import framebuf
-import gfx
+import d2_primitives
+import fb_utils
 
 # register definitions
 SET_CONTRAST = const(0x81)
@@ -115,13 +116,13 @@ class SSD1306:
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
     def invert(self):
-        gfx.invert(self)
+        fb_utils.invert(self)
 
     def invert_pixel(self, x, y):
-        gfx.invert_pixel(self, x, y)
+        fb_utils.invert_pixel(self, x, y)
 
     def invert_rect(self, x, y, w, h):
-        gfx.invert_rect(self, x, y, w, h)
+        fb_utils.invert_rect(self, x, y, w, h)
 
     def show(self):
         self.write_cmd(SET_COL_ADDR)
@@ -163,20 +164,20 @@ class SSD1306:
         self.framebuf.blit(fbuf, x, y, key)
 
     def circle(self, cx, cy, r, color):
-        gfx.circle(self, cx, cy, r, color)
+        d2_primitives.circle(self, cx, cy, r, color)
 
     def fill_circle(self, cx, cy, r, color):
-        gfx.fill_circle(self, cx, cy, r, color)
+        d2_primitives.fill_circle(self, cx, cy, r, color)
 
     def triangle(self, x0, y0, x1, y1, x2, y2, color):
-        gfx.triangle(self, x0, y0, x1, y1, x2, y2, color)
+        d2_primitives.triangle(self, x0, y0, x1, y1, x2, y2, color)
 
     def fill_triangle(self, x0, y0, x1, y1, x2, y2, color):
-        gfx.fill_triangle(self, x0, y0, x1, y1, x2, y2, color)
+        d2_primitives.fill_triangle(self, x0, y0, x1, y1, x2, y2, color)
 
     def polyline(self, polyline, color, close=False):
-        gfx.polyline(self, polyline, color, close=False)
+        d2_primitives.polyline(self, polyline, color, close=False)
 
     def fill_polyline(self, polyline, color, close=False):
-        gfx.fill_polyline(self, polyline, color, close=False)
+        d2_primitives.fill_polyline(self, polyline, color, close=False)
 
