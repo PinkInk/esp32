@@ -176,8 +176,8 @@ class SSD1306:
         d2primitives.fill_triangle(self, x0, y0, x1, y1, x2, y2, color)
 
     def polyline(self, polyline, color, close=False):
-        d2primitives.polyline(self, polyline, color, close=False)
+        d2primitives.polyline(self, polyline, color, close)
 
     def fill_polyline(self, polyline, color, close=False):
-        d2primitives.fill_polyline(self, polyline, color, close=False)
+        d2primitives.fill_polyline(self, polyline, color, close)
 

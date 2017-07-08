@@ -27,7 +27,7 @@ from d2 import intersection, pt_on_line
 
 
 def circle(display, cx, cy, r, color):
-    pixel = display.buffer.pixel
+    pixel = display.framebuf.pixel
     f = 1-r
     ddF_x = 1
     ddF_y = -2 * r
@@ -55,7 +55,7 @@ def circle(display, cx, cy, r, color):
         pixel(cx-y, cy-x, color)
 
 def fill_circle(display, cx, cy, r, color):
-    line = display.buffer.line
+    line = display.framebuf.line
     line(cx, cy-r, cx, cy-r+2*r+1, color)
     f = 1 - r
     ddF_x = 1
@@ -76,13 +76,13 @@ def fill_circle(display, cx, cy, r, color):
         line(cx-y, cy-x, cx-y, cy-x+2*x+1, color)
 
 def triangle(display, x0, y0, x1, y1, x2, y2, color):
-    line = display.buffer.line
+    line = display.framebuf.line
     line(x0, y0, x1, y1, color)
     line(x1, y1, x2, y2, color)
     line(x2, y2, x0, y0, color)
 
 def fill_triangle(display, x0, y0, x1, y1, x2, y2, color):
-    hline = display.buffer.hline
+    hline = display.framebuf.hline
     if y0 > y1:
         y0, y1 = y1, y0
         x0, x1 = x1, x0
@@ -139,18 +139,18 @@ def fill_triangle(display, x0, y0, x1, y1, x2, y2, color):
             a, b = b, a
         hline(int(a), y, int(b+1-a), color)
 
-def polyline(display, polyline, color, close=False):
-    line = display.buffer.line
+def polyline(display, poly, color, close=False):
+    line = display.framebuf.line
     previous = None
-    for point in polyline:
+    for point in poly:
         if previous:
             line(*previous+point+(color,))
         previous = point
     if close:
-        line(*previous+polyline[0]+(color,))
+        line(*previous+poly[0]+(color,))
 
 def fill_polyline(display, polyline, color, close=False):
-    hline = display.buffer.hline
+    hline = display.framebuf.hline
     xs = tuple(map(lambda pt: pt[0], polyline))
     ys = tuple(map(lambda pt: pt[1], polyline))
     bounds = ((min(xs), min(ys)), (max(xs), max(ys)))

@@ -1,5 +1,5 @@
 def invert(buffer):
-    for i in len(buffer):
+    for i in range(len(buffer)):
         buffer[i] = ~buffer[i]
 
 def invert_pixel(buffer, x, y):
@@ -10,7 +10,7 @@ def invert_pixel(buffer, x, y):
 def invert_rect(buffer, x, y, w, h):
     x, y, x1, y1 = min(x, x+w), min(y, y+h), max(x, x+w), max(y, y+h)
     indexes = [(i>>3)*128 for i in range(y, y1, 8)]
-    masks = [] if y%8 == 0 else [0]
+    masks = [] if not y&0x07 else [0]
     for i in range(y, y1):
         i = i&0x07
         if i == 0:
@@ -19,3 +19,4 @@ def invert_rect(buffer, x, y, w, h):
     for _x in range(x, x1):
         for idx, mask in zip(indexes, masks):
             buffer[idx+_x] = buffer[idx+_x] ^ mask
+
