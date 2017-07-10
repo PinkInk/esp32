@@ -71,18 +71,92 @@ while True:
         di = -di
 # --------------------------------------------------------
 
-x1 = d.width//2-10
-y1 = d.height//2-5
-x2 = d.width//2+10
-y2 = d.width//2+5
+import d2
+from math import pi
+from time import sleep
+c = d.width//2-1, d.height//2-1
+m = c[0], 0
+for i in range(2, 10):
+    points = tuple(d2.rotate(*m+c+((pi*2/i)*j,)) for j in range(i))
+    d.fill(0)
+    for pt in points:
+        for pt1 in points:
+            d.line(*pt+pt1+(1,))
+    d.show()
+    sleep(.1)
+# --------------------------------------------------------
 
-for y in range(y1, y2):
-    ds, ms = divmod(y*d.width + x1, 8)
-    de, me = divmod(y*d.width + x2, 8)
-    for i in range(ds, de):
-        d.buffer[i] = ~d.buffer[i]
+import d2, math
+cx, cy = d.width//2-1, d.height//2-1
+d1, dy = d.height//2-1, d.height//2-14
+t = (cx, 0), (cx+7, 14), (cx-7, 14)
+tc = cx, 14
+while True:
+    for i in range(0, 360, 6):
+        a = (math.pi*2/360)*i
+        td = tuple(
+            map(
+                lambda pt: d2.rotate(pt[0], pt[1], cx, cy, a),
+                t
+            )
+        )
+        tcd = d2.rotate(tc[0], tc[1], cx, cy, a)
+        d.fill(0)
+        d.triangle(*td[0]+td[1]+td[2]+(1,))
+        d.line(cx, cy, tcd[0], tcd[1], 1)
+        d.show()
+# --------------------------------------------------------
 
+import math
+import machine, ssd1306
+from ssd1306 import SSD1306
+import d3
 
+d = ssd1306.SSD1306(machine.I2C(scl=machine.Pin(4), sda=machine.Pin(5)))
+cx, cy = d.width//2-1, d.height//2-1
+l = 20
+center = cx, cy, l
 
+# ============== MODEL: CUBE ==============
+cube = (
+    ( # bottom face
+        (cx-l, cy-l, 0),
+        (cx+l, cy-l, 0),
+        (cx+l, cy+l, 0),
+        (cx-l, cy+l, 0),
+        (cx-l, cy-l, 0),
+    ),
+    ( # top face
+        (cx-l, cy-l, 2*l),
+        (cx+l, cy-l, 2*l),
+        (cx+l, cy+l, 2*l),
+        (cx-l, cy+l, 2*l),
+        (cx-l, cy-l, 2*l),
+    ),
+    # verticals
+    ((cx-l, cy-l, 0), (cx-l, cy-l, 2*l)),
+    ((cx+l, cy-l, 0), (cx+l, cy-l, 2*l)),
+    ((cx+l, cy+l, 0), (cx+l, cy+l, 2*l)),
+    ((cx-l, cy+l, 0), (cx-l, cy+l, 2*l)),
+)
 
-
+dt = 0
+while True:
+    d.fill(0)
+    # d3.renderPoly(d, cube,
+    #     lambda pt: d3.rotateXYZ(pt, center, (dt, dt, dt)),
+    # )
+    for path in cube:
+        previous = ()
+        for point in path:
+            point = d3.rotateXYZ(point, center, (dt, dt, dt))
+            point = tuple(map(int, point))
+            if previous:
+                d.line(
+                    point[0], point[1],
+                    previous[0], previous[1],
+                    1
+                )
+            previous = point
+    d.show()
+    dt += math.pi/24
