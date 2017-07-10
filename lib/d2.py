@@ -70,3 +70,8 @@ def mirror_y(x, y, y1, flatten=True):
 
 def mirror(x, y, l):
     pass
+
+def sumprod(vector1, vector2):
+    # "dot product"
+    from functools import reduce
+    return reduce(lambda i, j: i+j, map(lambda j: j[0]*j[1], zip(vector1, vector2)))
