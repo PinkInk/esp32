@@ -15,6 +15,12 @@ def pt_on_line(l, pt):
     return min(x1, x2) <= pt[0] <= max(x1, x2) \
         and min(y1, y2) <= pt[1] <= max(y1, y2)
 
+def midpoint(x0, y0, x1, y1, flatten=True):
+    if flatten:
+        return int(x0+(x1-x0)/2), int(y0+(y1-y0)/2)
+    else:
+        return x0+(x1-x0)/2, y0+(y1-y0)/2
+
 def scale_linear(smin, smax, tmin, tmax, flatten=True):
     scale = (tmax - tmin) / (smax - smin)
     if flatten:
