@@ -144,10 +144,10 @@ def polyline(display, poly, color, close=False):
     previous = None
     for point in poly:
         if previous:
-            line(*previous+point+(color,))
+            line(previous[0], previous[1], point[0], point[1], color)
         previous = point
     if close:
-        line(*previous+poly[0]+(color,))
+        line(previous[0], previous[1], poly[0][0], poly[0][1], color)
 
 def fill_polyline(display, polyline, color, close=False):
     hline = display.framebuf.hline
@@ -183,3 +183,4 @@ def fill_polyline(display, polyline, color, close=False):
                     pt[0]-ints[i-1][0],
                     1
                 )
+
