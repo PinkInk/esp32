@@ -48,18 +48,18 @@ def scale(point, center, scalev):
 def move(point, vector, scale=1):
     return tuple(map(lambda j: j[0]+j[1]*scale, zip(point, vector)))
 
-def sumprod(vector1, vector2):
-    # "dot product"
-    from functools import reduce
-    return reduce(lambda i, j: i+j, map(lambda j: j[0]*j[1], zip(vector1, vector2)))
+# def sumprod(vector1, vector2):
+#     # "dot product"
+#     from functools import reduce
+#     return reduce(lambda i, j: i+j, map(lambda j: j[0]*j[1], zip(vector1, vector2)))
 
-def crossprod(vector1, vector2):
-    # http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/index.htm
-    return (
-        vector1[1] * vector2[2] - vector2[1] * vector1[2],
-        vector1[2] * vector2[0] - vector2[2] * vector1[0],
-        vector1[0] * vector2[1] - vector2[0] * vector1[1]
-    )
+# def crossprod(vector1, vector2):
+#     # http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/index.htm
+#     return (
+#         vector1[1] * vector2[2] - vector2[1] * vector1[2],
+#         vector1[2] * vector2[0] - vector2[2] * vector1[0],
+#         vector1[0] * vector2[1] - vector2[0] * vector1[1]
+#     )
 
 # def viewpoint(point, location, direction):
 #     pass
