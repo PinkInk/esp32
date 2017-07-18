@@ -40,14 +40,15 @@ ticks = [] # max 128
 while True:
 
     start = time.ticks_ms()
-    d.fill(0)
 
     tick = get_current('LON', 'CLLN')
 
-    
+
     if tick:
 
         ticks.append(round(float(tick['l']), 2))
+
+        d.fill(0)
 
         while len(ticks) > d.width:
             del ticks[0] # delete oldest ticks
@@ -68,7 +69,7 @@ while True:
                     g.pixel(i, y(j), 1)
             # plot
             try:
-                previous = ticks[i+len(ticks)-d.width-1] 
+                previous = ticks[i+len(ticks)-d.width-1]
                 current = ticks[i+len(ticks)-d.width]
                 g.line(i-1, y(previous), i, y(current), 1)
             except:
@@ -79,21 +80,24 @@ while True:
 
         d.blit(g, 0, d.height//2, 0)
 
-    delta = ''
-    try:
-        diff = ticks[-1]-ticks[-2]
-        dsign = '+' if diff > 0 else ''
-        delta = dsign + str(round(diff, 2))
-    except:
-        pass
-    d.text('{} {} {}'.format(str(ticks[-1]), currency, delta), 0, 0, 1)
-    d.text('{}:{}'.format(exchange, stock), 0, 8, 1)
-    d.text('{}'.format(tick['ltt']), 0, 16, 1)
-    d.show()
-    gc.collect()
+        delta = ''
+        try:
+            diff = ticks[-1]-ticks[-2]
+            dsign = '+' if diff > 0 else ''
+            delta = dsign + str(round(diff, 2))
+        except:
+            pass
+
+        d.text('{} {} {}'.format(str(ticks[-1]), currency, delta), 0, 0, 1)
+        d.text('{}:{}'.format(exchange, stock), 0, 8, 1)
+        d.text('{}'.format(tick['ltt']), 0, 16, 1)
+
+        d.show()
+
+        gc.collect()
 
     runtime = time.ticks_diff(time.ticks_ms(), start)
     # print(runtime)
-    
+
     time.sleep(60-runtime/1000)
 
